@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.premiumgrocery.freshandfast.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.premiumgrocery.freshandfast.ui.shop.ShopFragment"
+        android:label="@string/navigation_shop"
+        tools:layout="@layout/fragment_shop" />
 
     <fragment
         android:id="@+id/navigation_notifications"
