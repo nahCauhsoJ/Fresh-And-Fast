@@ -2,10 +2,12 @@ package com.premiumgrocery.freshandfast.ui.shop
 
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.core.view.MenuProvider
+import androidx.core.view.isEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,10 +19,11 @@ import com.premiumgrocery.freshandfast.R
 import com.premiumgrocery.freshandfast.databinding.CardCategoryBinding
 import com.premiumgrocery.freshandfast.databinding.CardProductBinding
 import com.premiumgrocery.freshandfast.databinding.FragmentShopBinding
-import com.premiumgrocery.freshandfast.remote.model.CategoryData
+import com.premiumgrocery.freshandfast.local.model.LocalCategoryData
 import com.premiumgrocery.freshandfast.remote.model.SearchData
 import com.premiumgrocery.freshandfast.utils.RVAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.reflect.KFunction2
 
 // NOTE: NO NEED to use view pager. The difference in content is too little to make a difference.
 //      Instead, make a custom tab with buttons inside linear layout.
@@ -28,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
     private val vm by viewModels<ShopViewModel>()
-    private val categoryList = mutableListOf<CategoryData>()
+    private val categoryList = mutableListOf<LocalCategoryData>()
     private val searchResultList = mutableListOf<SearchData>()
 
     override fun onCreateView(
@@ -48,6 +51,9 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
                     .load(Const.imageBaseUrl + it.catImage)
                     .into(binding.categoryImage)
                 binding.categoryTitle.text = it.catName
+                binding.root.setOnClickListener { _ ->
+                    vm.searchGroceryProductByCategory(it.catId)
+                }
             }
             addItemDecoration(RVAdapter.spacerDecoration(gridColumnCount = 2))
         }
@@ -63,7 +69,44 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
                     .load(Const.imageBaseUrl + it.image)
                     .into(binding.productImage)
                 binding.productName.text = it.productName
-                binding.productPrice.text = "\$${it.price}"
+                binding.productUnitPrice.text = getString(R.string.product_price, it.price)
+                binding.productItemLeft.text = getString(R.string.product_item_left, it.quantity)
+                binding.productTotalItem.apply {
+                    setOnFocusChangeListener { _, b ->
+                        if (!b) sendOrderAndSync(
+                            this,
+                            it.id,
+                            text.toString().toIntOrNull()?: 0,
+                            it.quantity,
+                            vm::setProductOrder
+                        ).also { capped ->
+                            binding.productAddItem.isEnabled = capped < it.quantity
+                            binding.productRemoveItem.isEnabled = capped > 0
+                        }
+                    }
+
+                    binding.productAddItem.setOnClickListener { btn ->
+                        sendOrderAndSync(
+                            this,
+                            it.id,
+                            (text.toString().toIntOrNull()?: 0) + 1,
+                            it.quantity,
+                            vm::setProductOrder
+                        ).also { capped -> if (capped >= it.quantity) btn.isEnabled = false }
+                        binding.productRemoveItem.isEnabled = true
+                    }
+
+                    binding.productRemoveItem.setOnClickListener { btn ->
+                        sendOrderAndSync(
+                            this,
+                            it.id,
+                            (text.toString().toIntOrNull()?: 0) - 1,
+                            it.quantity,
+                            vm::setProductOrder
+                        ).also { capped -> if (capped <= 0) btn.isEnabled = false }
+                        binding.productAddItem.isEnabled = true
+                    }
+                }
             }
             addItemDecoration(RVAdapter.spacerDecoration(gridColumnCount = 1))
         }
@@ -135,5 +178,19 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
 
     override fun onMenuItemActionCollapse(p0: MenuItem) = true.also {
 
+    }
+
+    companion object {
+        private fun Int.toStringOrNull() = if (this == 0) null else this.toString()
+        private fun sendOrderAndSync(
+            editText: EditText,
+            productId: String,
+            amount: Int,
+            maxValue: Int,
+            placeOrder: KFunction2<String, Int, Unit>
+        ) = amount.coerceIn(0, maxValue).also {
+            placeOrder(productId, it)
+            editText.setText(it.toStringOrNull())
+        }
     }
 }

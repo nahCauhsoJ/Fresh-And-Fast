@@ -2,6 +2,7 @@ package com.premiumgrocery.freshandfast.remote.model
 
 
 import com.google.gson.annotations.SerializedName
+import com.premiumgrocery.freshandfast.local.model.LocalCategoryData
 
 data class CategoryData(
     @SerializedName("catDescription")
@@ -22,4 +23,16 @@ data class CategoryData(
     val status: Boolean,
     @SerializedName("__v")
     val v: Int
-)
+) {
+    fun toLocal() = LocalCategoryData(
+        catDescription = catDescription,
+        catId = catId,
+        catImage = catImage,
+        catName = catName,
+        id = id,
+        position = position,
+        slug = slug,
+        status = status,
+        v = v
+    )
+}
