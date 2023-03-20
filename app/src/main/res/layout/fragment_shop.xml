@@ -3,13 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <import type="java.util.List" />
         <variable
             name="holderFragment"
             type="com.premiumgrocery.freshandfast.ui.shop.ShopFragment" />
-        <variable
-            name="pageFragments"
-            type="List&lt;Object>" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,7 +27,7 @@
             android:id="@+id/shopSearchNoItemMessage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Can't find anything..."
+            android:text="@string/no_item_message"
             android:textSize="36sp"
             android:layout_gravity="center"
             android:visibility="invisible" />
@@ -44,5 +40,12 @@
             android:indeterminate="true"
             app:indicatorSize="256dp"
             app:trackThickness="16dp" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/checkoutFragment"
+            android:name="com.premiumgrocery.freshandfast.ui.shop.CheckoutFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

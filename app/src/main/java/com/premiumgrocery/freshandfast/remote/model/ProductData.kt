@@ -3,7 +3,7 @@ package com.premiumgrocery.freshandfast.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class SearchData(
+data class ProductData(
     @SerializedName("catId")
     val catId: Int,
     @SerializedName("created")

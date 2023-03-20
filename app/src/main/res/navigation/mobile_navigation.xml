@@ -9,17 +9,38 @@
         android:id="@+id/navigation_home"
         android:name="com.premiumgrocery.freshandfast.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_shop"
+            app:destination="@id/navigation_shop" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_order"
+            app:destination="@id/navigation_order" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_shop"
         android:name="com.premiumgrocery.freshandfast.ui.shop.ShopFragment"
         android:label="@string/navigation_shop"
-        tools:layout="@layout/fragment_shop" />
+        tools:layout="@layout/fragment_shop">
+        <action
+            android:id="@+id/action_navigation_shop_to_navigation_home"
+            app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_shop_to_navigation_order"
+            app:destination="@id/navigation_order" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.premiumgrocery.freshandfast.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_order"
+        android:name="com.premiumgrocery.freshandfast.ui.order.OrderFragment"
+        android:label="@string/navigation_order"
+        tools:layout="@layout/fragment_notifications">
+        <action
+            android:id="@+id/action_navigation_order_to_navigation_shop"
+            app:destination="@id/navigation_shop" />
+        <action
+            android:id="@+id/action_navigation_order_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
 </navigation>

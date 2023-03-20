@@ -7,9 +7,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
 import androidx.core.view.MenuProvider
-import androidx.core.view.isEmpty
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -20,19 +22,25 @@ import com.premiumgrocery.freshandfast.databinding.CardCategoryBinding
 import com.premiumgrocery.freshandfast.databinding.CardProductBinding
 import com.premiumgrocery.freshandfast.databinding.FragmentShopBinding
 import com.premiumgrocery.freshandfast.local.model.LocalCategoryData
-import com.premiumgrocery.freshandfast.remote.model.SearchData
+import com.premiumgrocery.freshandfast.remote.model.ProductData
 import com.premiumgrocery.freshandfast.utils.RVAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.reflect.KFunction2
 
 // NOTE: NO NEED to use view pager. The difference in content is too little to make a difference.
 //      Instead, make a custom tab with buttons inside linear layout.
 
 @AndroidEntryPoint
-class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
-    private val vm by viewModels<ShopViewModel>()
+class ShopFragment: Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
+    private val vm by activityViewModels<ShopViewModel>()
     private val categoryList = mutableListOf<LocalCategoryData>()
-    private val searchResultList = mutableListOf<SearchData>()
+    private val searchResultList = mutableListOf<ProductData>()
+    private lateinit var searchResultAdapter: RVAdapter<ProductData>
+
+    @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +48,9 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
     ): View = DataBindingUtil.inflate<FragmentShopBinding>(
         inflater, R.layout.fragment_shop, container, false
     ).apply {
+        holderFragment = this@ShopFragment
+        checkoutFragment.getFragment<CheckoutFragment>()
+
         shopCategoriesGrid.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = RVAdapter(
@@ -72,6 +83,11 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
                 binding.productUnitPrice.text = getString(R.string.product_price, it.price)
                 binding.productItemLeft.text = getString(R.string.product_item_left, it.quantity)
                 binding.productTotalItem.apply {
+                    val orderAmount = vm.currentOrdersStatic[it.id]?:0
+                    setText( orderAmount.toString() )
+                    binding.productAddItem.isEnabled = orderAmount < it.quantity
+                    binding.productRemoveItem.isEnabled = orderAmount > 0
+
                     setOnFocusChangeListener { _, b ->
                         if (!b) sendOrderAndSync(
                             this,
@@ -107,12 +123,8 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
                         binding.productAddItem.isEnabled = true
                     }
                 }
-            }
+            }.also { searchResultAdapter = it }
             addItemDecoration(RVAdapter.spacerDecoration(gridColumnCount = 1))
-        }
-
-        vm.isProcessing.observe(viewLifecycleOwner) {
-            shopLoading.visibility = if(it) View.VISIBLE else View.GONE
         }
 
         vm.categories.observe(viewLifecycleOwner) {
@@ -122,7 +134,7 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
             }
             categoryList.addAll(it)
             shopCategoriesGrid.adapter?.notifyItemRangeInserted(0, categoryList.size)
-            vm.finishedLoading()
+            vm.endProcessTask(Const.processLabelStart)
         }
 
         vm.searchResult.observe(viewLifecycleOwner) {
@@ -141,6 +153,14 @@ class ShopFragment : Fragment(), MenuProvider, MenuItem.OnActionExpandListener {
             }
             searchResultList.addAll(it)
             shopSearchResult.adapter?.notifyItemRangeInserted(0, searchResultList.size)
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.processTasks.collect {
+                    shopLoading.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+                }
+            }
         }
     }.root
 

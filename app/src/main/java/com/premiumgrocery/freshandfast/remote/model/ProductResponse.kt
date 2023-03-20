@@ -3,11 +3,9 @@ package com.premiumgrocery.freshandfast.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class SearchResponse(
-    @SerializedName("count")
-    val count: Int,
+data class ProductResponse(
     @SerializedName("data")
-    val result: List<ProductData>,
+    val result: ProductData,
     @SerializedName("error")
     val error: Boolean
 )

@@ -1,6 +1,7 @@
 package com.premiumgrocery.freshandfast.remote
 
 import com.premiumgrocery.freshandfast.remote.model.CategoryResponse
+import com.premiumgrocery.freshandfast.remote.model.ProductResponse
 import com.premiumgrocery.freshandfast.remote.model.SearchResponse
 import com.premiumgrocery.freshandfast.remote.model.SubcategoryResponse
 import retrofit2.Response
@@ -28,4 +29,9 @@ interface ApiGrocery {
     suspend fun searchGroceryProduct(
         @Path("name") query: String
     ): Response<SearchResponse>
+
+    @GET("products/{id}")
+    suspend fun getGroceryProductById(
+        @Path("id") id: String
+    ): Response<ProductResponse>
 }

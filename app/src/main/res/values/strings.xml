@@ -7,5 +7,22 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="navigation_shop">Shop</string>
     <string name="product_price">Price: $%1$.2f</string>
+    <string name="product_quantity">Quantity: %d</string>
     <string name="product_item_left">Item Left: %1$d</string>
+    <string name="navigation_order">Orders</string>
+    <string name="total_cost">Total cost: $%.2f</string>
+    <string name="no_item_message">Can\'t find anything...</string>
+    <string name="checkout">Checkout</string>
+    <string name="buynow_with_total_price">Buy Now ($%.2f)</string>
+    <string name="orderPageHeader">These are your orders:</string>
+    <string name="orderListEmptyMessage">There is nothing in your shopping cart...</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
 </resources>
