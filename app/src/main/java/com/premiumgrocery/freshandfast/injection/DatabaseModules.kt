@@ -1,6 +1,8 @@
 package com.premiumgrocery.freshandfast.injection
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.local.RoomDB
@@ -20,6 +22,10 @@ object DatabaseModules {
 
     @Provides
     fun provideOrderDao(db: RoomDB) = db.orderDao()
+
+    @Provides
+    fun provideSharedPrefs(@ApplicationContext context: Context): SharedPreferences =
+        context.getSharedPreferences(Const.sharedPrefName, MODE_PRIVATE)
 }
 
 @Module

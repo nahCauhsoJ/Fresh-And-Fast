@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.premiumgrocery.freshandfast.Const
+import com.premiumgrocery.freshandfast.OrderStatus
 import com.premiumgrocery.freshandfast.R
 import com.premiumgrocery.freshandfast.databinding.CardProductCheckoutBinding
 import com.premiumgrocery.freshandfast.databinding.FragmentOrderBinding
@@ -27,7 +28,6 @@ import javax.inject.Inject
 class OrderFragment : Fragment() {
     private val vm by activityViewModels<OrderViewModel>()
     private val currentOrderList = mutableListOf<ProductData>()
-    private var skippedObserveInit1 = false
 
     @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
@@ -38,6 +38,7 @@ class OrderFragment : Fragment() {
     inflater, R.layout.fragment_order, container, false
     ).apply {
         viewModel = vm
+        fragment = this@OrderFragment
         lifecycleOwner = viewLifecycleOwner
         orderList.apply {
             layoutManager = LinearLayoutManager(context)
@@ -67,12 +68,11 @@ class OrderFragment : Fragment() {
             }
         }
 
+        // Note that if the order is empty, it'll be observed
+        //      once as usual. But if it's not, somehow it'll
+        //      emit an empty list, then the real list. Be
+        //      careful when you use it.
         vm.orderDetails.observe(viewLifecycleOwner) {
-            if (!skippedObserveInit1) {
-                skippedObserveInit1 = true
-                return@observe
-            }
-
             currentOrderList.size.apply {
                 currentOrderList.clear()
                 orderList.adapter?.notifyItemRangeRemoved(0, this)
@@ -93,6 +93,17 @@ class OrderFragment : Fragment() {
             vm.endProcessTask(Const.processLabelStart)
         }
 
+        vm.placeOrderStatus.observe(viewLifecycleOwner) {
+            if (it == null) return@observe
+            Snackbar.make(this@OrderFragment.requireView(),
+                when (it) {
+                    OrderStatus.SUCCESS -> "Order placed! Thank you for using our service."
+                    OrderStatus.FAIL -> "Something bad happened on our side."
+                },
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.processTasks.collect {
@@ -101,4 +112,8 @@ class OrderFragment : Fragment() {
             }
         }
     }.root
+
+    fun submitOrderPrompt() {
+        ConfirmAlert(requireContext()) { vm.submitOrder() }
+    }
 }

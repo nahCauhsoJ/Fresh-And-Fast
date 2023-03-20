@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.premiumgrocery.freshandfast.ui.register.RegisterViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RegisterActivity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/registerHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32sp"
+            android:text="@string/registerHeader"
+            android:textSize="28sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="32dp"
+            android:background="?colorPrimaryContainer"
+            android:padding="32dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/registerFormEmail"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Enter email"
+                android:minWidth="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerFormEmail}"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/registerFormPassword"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Enter password"
+                app:endIconMode="password_toggle"
+                app:layout_constraintEnd_toEndOf="@+id/registerFormEmail"
+                app:layout_constraintStart_toStartOf="@+id/registerFormEmail"
+                app:layout_constraintTop_toBottomOf="@+id/registerFormEmail">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/registerFormPhone"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Enter phone number"
+                app:layout_constraintEnd_toEndOf="@+id/registerFormEmail"
+                app:layout_constraintStart_toStartOf="@+id/registerFormEmail"
+                app:layout_constraintTop_toBottomOf="@+id/registerFormPassword">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/registerFormFirstname"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="How shall we call you?"
+                app:layout_constraintEnd_toEndOf="@+id/registerFormEmail"
+                app:layout_constraintStart_toStartOf="@+id/registerFormEmail"
+                app:layout_constraintTop_toBottomOf="@+id/registerFormPhone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/registerFormError"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:textAlignment="center"
+                android:textColor="?colorError"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/registerFormFirstname" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/registerFormSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/registerFormSubmit"
+                android:onClick="@{() -> viewModel.onRegister()}"
+                app:layout_constraintEnd_toEndOf="@+id/registerFormEmail"
+                app:layout_constraintStart_toStartOf="@+id/registerFormEmail"
+                app:layout_constraintTop_toBottomOf="@+id/registerFormError" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

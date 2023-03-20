@@ -7,6 +7,9 @@
         <variable
             name="viewModel"
             type="com.premiumgrocery.freshandfast.ui.order.OrderViewModel" />
+        <variable
+            name="fragment"
+            type="com.premiumgrocery.freshandfast.ui.order.OrderFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,6 +45,7 @@
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="@{@string/buynow_with_total_price(viewModel.orderTotalCost)}"
+            android:onClick="@{() -> fragment.submitOrderPrompt()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

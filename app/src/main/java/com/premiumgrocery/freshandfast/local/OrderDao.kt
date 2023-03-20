@@ -15,4 +15,7 @@ interface OrderDao {
 
     @Query("delete from ${Const.dbTableCurrentOrder} where id = :id")
     fun deleteCurrentOrder(id: String)
+
+    @Query("DELETE FROM ${Const.dbTableCurrentOrder}")
+    fun clearCurrentOrder()
 }

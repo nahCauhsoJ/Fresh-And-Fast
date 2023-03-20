@@ -20,6 +20,7 @@ class UserOrderRepository @Inject constructor(
     }
 
     override fun deleteOrder(id: String) = orderDao.deleteCurrentOrder(id)
+    override fun clearOrder() = orderDao.clearCurrentOrder()
     override suspend fun updateTotalOrderCost(
         currentOrder: HashMap<String, Int>,
         products: HashMap<String, ProductData?>
@@ -48,4 +49,6 @@ interface IUserOrderRepository {
         currentOrder: HashMap<String, Int>,
         products: HashMap<String, ProductData?>
     ): Double
+
+    fun clearOrder()
 }
