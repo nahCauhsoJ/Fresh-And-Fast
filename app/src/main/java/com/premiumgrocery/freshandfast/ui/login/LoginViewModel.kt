@@ -8,13 +8,17 @@ import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.premiumgrocery.freshandfast.BR
 import com.premiumgrocery.freshandfast.Const
+import com.premiumgrocery.freshandfast.R
 import com.premiumgrocery.freshandfast.remote.LoginRepository
+import com.premiumgrocery.freshandfast.remote.model.LoginResponseSealed
 import com.premiumgrocery.freshandfast.utils.LoginPrefAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,7 +42,9 @@ class LoginViewModel @Inject constructor(
         set(value) = setPassword(value).also { field = value }
 
     @get:Bindable
-    var loginFormCanSubmit = false
+    var loginFormIsFilled = false
+    @get:Bindable
+    var loginIsSubmitting = false
 
     @get:Bindable
     var loginFormError = ""
@@ -59,32 +65,37 @@ class LoginViewModel @Inject constructor(
     private fun checkValidInput(e: String? = null, p: String? = null) {
         val email = e ?: loginFormEmail
         val password = p ?: loginFormPassword
-        loginFormCanSubmit = email.isNotBlank() && password.isNotBlank()
-        notifyPropertyChanged(BR.loginFormCanSubmit)
+        loginFormIsFilled = email.isNotBlank() && password.isNotBlank()
+        notifyPropertyChanged(BR.loginFormIsFilled)
     }
 
     private fun setLoginError(value: String) {
         loginFormError = value
+        notifyPropertyChanged(BR.loginFormError)
     }
 
     fun onLogin() {
-        /*viewModelScope.launch(ioDispatcher) {
+        loginIsSubmitting = true
+        notifyPropertyChanged(BR.loginIsSubmitting)
+
+        viewModelScope.launch(ioDispatcher) {
             loginRepository.login(loginFormEmail, loginFormPassword).collect{
                 if (it is LoginResponseSealed.Success) {
-                    println("Success?")
+                    _finishLogin.postValue(true)
+                    loginPrefAdapter.setUserId(Const.placeholderUserId)
+                    loginPrefAdapter.setUserEmail(Const.placeholderUserEmail)
+                    loginPrefAdapter.setUserToken(Const.placeholderToken)
+                    setLoginError("")
                 }
                 else {
                     setLoginError(it.errorResponse?.message?:
                         context.getString(R.string.unknownError)
                     )
                 }
+                loginIsSubmitting = false
+                notifyPropertyChanged(BR.loginIsSubmitting)
             }
-        }*/
-        // Let's do a backdoor access now. Login doesn't seem to work.
-        _finishLogin.value = true
-        loginPrefAdapter.setUserId(Const.placeholderUserId)
-        loginPrefAdapter.setUserEmail(Const.placeholderUserEmail)
-        loginPrefAdapter.setUserToken(Const.placeholderToken)
+        }
     }
 
     private val mCallbacks = PropertyChangeRegistry()

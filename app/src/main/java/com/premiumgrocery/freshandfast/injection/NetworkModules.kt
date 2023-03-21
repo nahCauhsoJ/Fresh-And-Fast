@@ -1,5 +1,6 @@
 package com.premiumgrocery.freshandfast.injection
 
+import com.google.gson.Gson
 import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.remote.ApiGrocery
 import dagger.Module
@@ -26,4 +27,8 @@ object NetworkModules {
     @Singleton
     @Provides
     fun ioDispatcher() = Dispatchers.IO
+
+    @Singleton
+    @Provides
+    fun gson() = Gson()
 }

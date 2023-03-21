@@ -1,12 +1,14 @@
 package com.premiumgrocery.freshandfast.remote
 
+import com.google.gson.Gson
 import com.premiumgrocery.freshandfast.remote.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
-    private val apiGrocery: ApiGrocery
+    private val apiGrocery: ApiGrocery,
+    private val gson: Gson
 ): ILoginRepository {
     override fun register(
         email: String,
@@ -28,17 +30,19 @@ class LoginRepository @Inject constructor(
         apiGrocery.postLoginUser(
             LoginRequestBody( email, password )
         ).apply{
-            println(this.toString())
-            println(this.body().toString())
-            println(this.errorBody().toString())
-        }.body()?.apply {
-            emit(
-                if (this is LoginSuccessResponse) LoginResponseSealed.Success(this)
-                else LoginResponseSealed.Error (this as ErrorResponse)
-            )
+            body()?.let {
+                emit(LoginResponseSealed.Success(
+                    gson.fromJson(gson.toJsonTree(it), LoginSuccessResponse::class.java)
+                ))
+            }
+            errorBody()?.let {
+                val error = it.string() // This one is a stream. Only run it once.
+                emit(LoginResponseSealed.Error(
+                    gson.fromJson(error, ErrorResponse::class.java)
+                ))
+            }
         }
     }
-
 }
 
 interface ILoginRepository {

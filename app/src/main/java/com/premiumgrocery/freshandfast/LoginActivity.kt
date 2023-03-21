@@ -22,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
 
             activity = this@LoginActivity
             viewModel = vm
+            lifecycleOwner = this@LoginActivity
             vm.finishLogin.observe(this@LoginActivity) {
                 if (it) gotoMain()
             }

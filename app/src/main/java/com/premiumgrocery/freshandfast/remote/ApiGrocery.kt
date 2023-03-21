@@ -17,7 +17,6 @@ interface ApiGrocery {
         @Body registerBody: RegisterRequestBody
     ): Response<Any>
 
-    @FormUrlEncoded
     @POST("auth/login")
     suspend fun postLoginUser(
         @Body loginBody: LoginRequestBody
