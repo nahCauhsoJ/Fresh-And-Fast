@@ -33,4 +33,9 @@
     <string name="unknownError">Unknown Error</string>
     <string name="navigation_history">Your Orders</string>
     <string name="navigation_account">Account</string>
+
+    <string-array name="settingsList">
+        <item>Change Shipping Address</item>
+        <item>Log out</item>
+    </string-array>
 </resources>
