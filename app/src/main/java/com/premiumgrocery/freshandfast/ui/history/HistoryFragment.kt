@@ -7,8 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.R
 import com.premiumgrocery.freshandfast.databinding.CardOrderBinding
@@ -37,8 +41,14 @@ class HistoryFragment : Fragment() {
                 {p0,p1,p2 -> CardOrderBinding.inflate(p0,p1,p2)}
             ) { it,v,_->
                 val binding = v as CardOrderBinding
-
+                binding.orderCardProducts.text = it.productSummary()
+                binding.orderCardDate.text = it.date
+                // orderSummary usually isn't null, but one entry somehow got a null
+                //      inside the API. This is the easier way to deal with it
+                //      other than revamping the models and schemas.
+                binding.orderCardTotalCost.text = "\$${it.orderSummary?.ourPrice ?: "N/A"}"
             }
+            addItemDecoration(MaterialDividerItemDecoration(context, RecyclerView.VERTICAL))
         }
 
         lifecycleScope.launch {
@@ -52,6 +62,15 @@ class HistoryFragment : Fragment() {
 
             }
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.processTasks.collect {
+                    historyLoading.visibility = if (it.isNotEmpty()) View.VISIBLE else View.GONE
+                }
+            }
+        }
+
         vm.endProcessTask(Const.processLabelStart)
     }.root
 
@@ -59,4 +78,7 @@ class HistoryFragment : Fragment() {
         super.onStart()
         vm.getOrders()
     }
+
+    private fun OrderResponseData.productSummary() =
+        "${products.size} products: ${products.joinToString{it.productName}}"
 }
