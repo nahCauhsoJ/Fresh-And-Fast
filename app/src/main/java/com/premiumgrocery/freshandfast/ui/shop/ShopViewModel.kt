@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.premiumgrocery.freshandfast.Const
-import com.premiumgrocery.freshandfast.local.UserOrderRepository
+import com.premiumgrocery.freshandfast.local.IUserOrderRepository
 import com.premiumgrocery.freshandfast.local.model.LocalCategoryData
 import com.premiumgrocery.freshandfast.local.model.LocalSubcategoryData
 import com.premiumgrocery.freshandfast.remote.ICategoryRepository
@@ -29,7 +29,7 @@ import kotlin.collections.toList
 @HiltViewModel
 class ShopViewModel @Inject constructor(
     private val categoryRepository: ICategoryRepository,
-    private val userOrderRepository: UserOrderRepository,
+    private val userOrderRepository: IUserOrderRepository,
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
     private val _processTasks = MutableStateFlow(listOf(Const.processLabelStart))

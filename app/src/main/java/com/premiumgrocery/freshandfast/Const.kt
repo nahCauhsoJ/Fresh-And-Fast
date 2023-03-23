@@ -18,6 +18,7 @@ object Const {
     const val processLabelGetTotalOrderCost = "total_order_cost"
     const val processLabelDeleteCurrentProducts = "delete_products"
     const val processLabelPlaceOrder = "place_order"
+    const val processLabelGetOrders = "get_orders"
 
     const val placeholderUserId = "6346077ca0227900171cdba0"
     const val placeholderUserEmail = "abc@gmail.com"

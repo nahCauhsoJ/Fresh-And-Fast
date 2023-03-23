@@ -32,7 +32,7 @@ class CheckoutFragment @Inject constructor() : Fragment() {
                     // This fixes an obnoxious weird behavior where after pressing
                     //      the checkout button, orderResponseUser cannot navigate back to
                     //      the Shop tab. Probably something with the backstack.
-                    this.popUpTo(R.id.navigation_home)
+                    this.popUpTo(R.id.navigation_shop)
                 }
             )
         }

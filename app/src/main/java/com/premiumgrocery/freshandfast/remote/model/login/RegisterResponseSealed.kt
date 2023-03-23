@@ -1,4 +1,6 @@
-package com.premiumgrocery.freshandfast.remote.model
+package com.premiumgrocery.freshandfast.remote.model.login
+
+import com.premiumgrocery.freshandfast.remote.model.ErrorResponse
 
 sealed class RegisterResponseSealed(
     isSuccess: Boolean,

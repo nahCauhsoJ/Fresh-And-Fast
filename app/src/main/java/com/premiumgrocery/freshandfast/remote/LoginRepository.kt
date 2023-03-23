@@ -2,6 +2,7 @@ package com.premiumgrocery.freshandfast.remote
 
 import com.google.gson.Gson
 import com.premiumgrocery.freshandfast.remote.model.*
+import com.premiumgrocery.freshandfast.remote.model.login.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -31,13 +32,15 @@ class LoginRepository @Inject constructor(
             LoginRequestBody( email, password )
         ).apply{
             body()?.let {
-                emit(LoginResponseSealed.Success(
+                emit(
+                    LoginResponseSealed.Success(
                     gson.fromJson(gson.toJsonTree(it), LoginSuccessResponse::class.java)
                 ))
             }
             errorBody()?.let {
                 val error = it.string() // This one is a stream. Only run it once.
-                emit(LoginResponseSealed.Error(
+                emit(
+                    LoginResponseSealed.Error(
                     gson.fromJson(error, ErrorResponse::class.java)
                 ))
             }

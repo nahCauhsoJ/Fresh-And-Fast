@@ -1,4 +1,4 @@
-package com.premiumgrocery.freshandfast.remote.model
+package com.premiumgrocery.freshandfast.remote.model.login
 
 data class RegisterRequestBody(
     val firstName: String,

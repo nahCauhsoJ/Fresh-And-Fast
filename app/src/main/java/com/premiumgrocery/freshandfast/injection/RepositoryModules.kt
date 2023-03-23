@@ -2,10 +2,7 @@ package com.premiumgrocery.freshandfast.injection
 
 import com.premiumgrocery.freshandfast.local.IUserOrderRepository
 import com.premiumgrocery.freshandfast.local.UserOrderRepository
-import com.premiumgrocery.freshandfast.remote.CategoryRepository
-import com.premiumgrocery.freshandfast.remote.ICategoryRepository
-import com.premiumgrocery.freshandfast.remote.ILoginRepository
-import com.premiumgrocery.freshandfast.remote.LoginRepository
+import com.premiumgrocery.freshandfast.remote.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -19,4 +16,5 @@ abstract class RepositoryModules {
     @Binds abstract fun bindLoginRepository(impl: LoginRepository): ILoginRepository
     @Binds abstract fun bindCategoryRepository(impl: CategoryRepository): ICategoryRepository
     @Binds abstract fun bindUserOrderRepository(impl: UserOrderRepository): IUserOrderRepository
+    @Binds abstract fun bindOrderRepository(impl: OrderRepository): IOrderRepository
 }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class OrderResponse(
     @SerializedName("data")
-    val result: OrderResponseData,
+    val result: List<OrderResponseData>,
     @SerializedName("error")
     val error: Boolean,
     @SerializedName("message")

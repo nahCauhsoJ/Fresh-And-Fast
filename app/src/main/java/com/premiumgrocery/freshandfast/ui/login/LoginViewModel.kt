@@ -12,9 +12,9 @@ import androidx.lifecycle.viewModelScope
 import com.premiumgrocery.freshandfast.BR
 import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.R
-import com.premiumgrocery.freshandfast.remote.LoginRepository
-import com.premiumgrocery.freshandfast.remote.model.LoginResponseSealed
-import com.premiumgrocery.freshandfast.utils.LoginPrefAdapter
+import com.premiumgrocery.freshandfast.remote.ILoginRepository
+import com.premiumgrocery.freshandfast.remote.model.login.LoginResponseSealed
+import com.premiumgrocery.freshandfast.utils.ILoginPrefAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,9 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 @SuppressLint("StaticFieldLeak") // Lint doesn't know the context is application context.
 class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository,
+    private val loginRepository: ILoginRepository,
     private val ioDispatcher: CoroutineDispatcher,
-    private val loginPrefAdapter: LoginPrefAdapter,
+    private val loginPrefAdapter: ILoginPrefAdapter,
     @ApplicationContext val context: Context
 ): ViewModel(), Observable {
     val isAlreadyLoggedIn = loginPrefAdapter.getUserToken() != null

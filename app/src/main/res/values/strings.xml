@@ -9,7 +9,7 @@
     <string name="product_price">Price: $%1$.2f</string>
     <string name="product_quantity">Quantity: %d</string>
     <string name="product_item_left">Item Left: %1$d</string>
-    <string name="navigation_order">Orders</string>
+    <string name="navigation_order">Check Out</string>
     <string name="total_cost">Total cost: $%.2f</string>
     <string name="no_item_message">Can\'t find anything...</string>
     <string name="checkout">Checkout</string>
@@ -31,4 +31,6 @@
     <string name="loginFormGotoRegister">New? Register here.</string>
     <string name="loginHeader">Login</string>
     <string name="unknownError">Unknown Error</string>
+    <string name="navigation_history">Your Orders</string>
+    <string name="navigation_account">Account</string>
 </resources>

@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.OrderStatus
-import com.premiumgrocery.freshandfast.local.UserOrderRepository
-import com.premiumgrocery.freshandfast.remote.CategoryRepository
-import com.premiumgrocery.freshandfast.remote.OrderRepository
+import com.premiumgrocery.freshandfast.local.IUserOrderRepository
+import com.premiumgrocery.freshandfast.remote.ICategoryRepository
+import com.premiumgrocery.freshandfast.remote.IOrderRepository
 import com.premiumgrocery.freshandfast.remote.model.ProductData
 import com.premiumgrocery.freshandfast.remote.model.orderrequest.OrderRequestItem
-import com.premiumgrocery.freshandfast.utils.LoginPrefAdapter
+import com.premiumgrocery.freshandfast.utils.ILoginPrefAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
@@ -22,10 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
 class OrderViewModel @Inject constructor(
-    private val categoryRepository: CategoryRepository,
-    private val userOrderRepository: UserOrderRepository,
-    private val orderRepository: OrderRepository,
-    private val loginPrefAdapter: LoginPrefAdapter,
+    private val categoryRepository: ICategoryRepository,
+    private val userOrderRepository: IUserOrderRepository,
+    private val orderRepository: IOrderRepository,
+    private val loginPrefAdapter: ILoginPrefAdapter,
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
     private val _processTasks = MutableStateFlow(listOf(Const.processLabelStart))
