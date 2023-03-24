@@ -33,6 +33,8 @@
     <string name="unknownError">Unknown Error</string>
     <string name="navigation_history">Your Orders</string>
     <string name="navigation_account">Account</string>
+    <string name="orderDeliveryCharge">Delivery Charges: +$%.2f</string>
+    <string name="orderDiscount">Discount Total: -$%.2f</string>
 
     <string-array name="settingsList">
         <item>Change Shipping Address</item>

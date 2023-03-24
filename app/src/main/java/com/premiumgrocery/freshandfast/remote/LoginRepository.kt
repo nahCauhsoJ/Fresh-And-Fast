@@ -18,12 +18,25 @@ class LoginRepository @Inject constructor(
         firstname: String
     ) = flow {
         apiGrocery.postRegisterUser(
-            RegisterRequestBody( email, password, phone, firstname )
-        ).body()?.apply {
-            emit(
-                if (this is RegisterSuccessResponse) RegisterResponseSealed.Success(this)
-                else RegisterResponseSealed.Error (this as ErrorResponse)
-            )
+            RegisterRequestBody(
+                email = email,
+                password = password,
+                mobile = phone,
+                firstName = firstname )
+        ).apply{
+            body()?.let {
+                emit(
+                    RegisterResponseSealed.Success(
+                        gson.fromJson(gson.toJsonTree(it), RegisterSuccessResponse::class.java)
+                ))
+            }
+            errorBody()?.let {
+                val error = it.string()
+                emit(
+                    RegisterResponseSealed.Error(
+                        gson.fromJson(error, ErrorResponse::class.java)
+                ))
+            }
         }
     }
 
@@ -34,14 +47,14 @@ class LoginRepository @Inject constructor(
             body()?.let {
                 emit(
                     LoginResponseSealed.Success(
-                    gson.fromJson(gson.toJsonTree(it), LoginSuccessResponse::class.java)
+                        gson.fromJson(gson.toJsonTree(it), LoginSuccessResponse::class.java)
                 ))
             }
             errorBody()?.let {
                 val error = it.string() // This one is a stream. Only run it once.
                 emit(
                     LoginResponseSealed.Error(
-                    gson.fromJson(error, ErrorResponse::class.java)
+                        gson.fromJson(error, ErrorResponse::class.java)
                 ))
             }
         }

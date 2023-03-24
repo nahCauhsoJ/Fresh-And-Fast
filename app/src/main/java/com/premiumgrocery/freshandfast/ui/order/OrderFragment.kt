@@ -102,6 +102,7 @@ class OrderFragment : Fragment() {
                 },
                 Snackbar.LENGTH_LONG
             ).show()
+            vm.orderPlacedProcessed()
         }
 
         lifecycleScope.launch {

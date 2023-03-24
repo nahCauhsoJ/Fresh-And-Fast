@@ -20,6 +20,11 @@ class LoginActivity : AppCompatActivity() {
         ).apply {
             if (vm.isAlreadyLoggedIn) gotoMain()
 
+            vm.fillInForm(
+                intent.getStringExtra(RegisterActivity.email_arg) ?: "",
+                intent.getStringExtra(RegisterActivity.password_arg) ?: ""
+            )
+
             activity = this@LoginActivity
             viewModel = vm
             lifecycleOwner = this@LoginActivity
@@ -29,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun gotoMain() = Intent(this@LoginActivity, MainActivity::class.java).apply {
+    private fun gotoMain() = Intent(this@LoginActivity, MainActivity::class.java).apply {
         startActivity(this)
         finish()
     }

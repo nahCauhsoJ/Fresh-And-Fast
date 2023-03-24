@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.premiumgrocery.freshandfast.ui.register.RegisterViewModel" />
@@ -63,7 +64,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:text="@={viewModel.registerFormPassword}" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,7 +83,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerFormPhone}"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,7 +101,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@={viewModel.registerFormFirstname}"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,7 +113,8 @@
                 android:layout_margin="16dp"
                 android:textAlignment="center"
                 android:textColor="?colorError"
-                android:visibility="gone"
+                android:text="@{viewModel.registerFormError}"
+                android:visibility="@{ viewModel.registerFormError.empty ? View.GONE : View.VISIBLE }"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/registerFormFirstname" />
@@ -119,10 +125,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:text="@string/registerFormSubmit"
+                android:enabled="@{viewModel.registerFormIsFilled &amp;&amp; !viewModel.registerIsSubmitting}"
                 android:onClick="@{() -> viewModel.onRegister()}"
                 app:layout_constraintEnd_toEndOf="@+id/registerFormEmail"
                 app:layout_constraintStart_toStartOf="@+id/registerFormEmail"
                 app:layout_constraintTop_toBottomOf="@+id/registerFormError" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/registerLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="@{viewModel.registerIsSubmitting ? View.VISIBLE : View.INVISIBLE}"
+                app:indicatorSize="256dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:trackThickness="16dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

@@ -7,7 +7,5 @@ data class OrderResponse(
     @SerializedName("data")
     val result: List<OrderResponseData>,
     @SerializedName("error")
-    val error: Boolean,
-    @SerializedName("message")
-    val message: String
+    val error: Boolean
 )

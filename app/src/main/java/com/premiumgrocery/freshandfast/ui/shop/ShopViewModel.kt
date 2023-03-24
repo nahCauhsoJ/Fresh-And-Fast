@@ -9,6 +9,7 @@ import com.premiumgrocery.freshandfast.local.IUserOrderRepository
 import com.premiumgrocery.freshandfast.local.model.LocalCategoryData
 import com.premiumgrocery.freshandfast.local.model.LocalSubcategoryData
 import com.premiumgrocery.freshandfast.remote.ICategoryRepository
+import com.premiumgrocery.freshandfast.remote.IOrderRepository
 import com.premiumgrocery.freshandfast.remote.model.ProductData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,6 +31,7 @@ import kotlin.collections.toList
 class ShopViewModel @Inject constructor(
     private val categoryRepository: ICategoryRepository,
     private val userOrderRepository: IUserOrderRepository,
+    private val orderRepository: IOrderRepository, // Only here to randomize extras
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
     private val _processTasks = MutableStateFlow(listOf(Const.processLabelStart))
@@ -137,6 +139,7 @@ class ShopViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             userOrderRepository.updateOrders(currentOrdersStatic)
         }
+        orderRepository.randomizeExtras()
     }
 
     private fun getProductOrders() = userOrderRepository.getOrders()

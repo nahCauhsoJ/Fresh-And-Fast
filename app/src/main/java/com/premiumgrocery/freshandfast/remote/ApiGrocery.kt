@@ -4,6 +4,7 @@ import com.premiumgrocery.freshandfast.remote.model.*
 import com.premiumgrocery.freshandfast.remote.model.login.LoginRequestBody
 import com.premiumgrocery.freshandfast.remote.model.login.RegisterRequestBody
 import com.premiumgrocery.freshandfast.remote.model.orderrequest.OrderRequest
+import com.premiumgrocery.freshandfast.remote.model.orderrequest.OrderRequestResponse
 import com.premiumgrocery.freshandfast.remote.model.orderresponse.OrderResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -56,12 +57,8 @@ interface ApiGrocery {
     @POST("orders")
     suspend fun placeOrder(
         @Body orderRequest: OrderRequest
-    ): Response<OrderResponse>
+    ): Response<OrderRequestResponse>
 
-    // While the result is OrderResponse, same as placeOrder(), this API actually
-    //      doesn't have the "message" column, but "count" instead. Since there
-    //      isn't really a need for "count", we decided to recycle this model.
-    //      Note that it means "message" will always be null on this result.
     @GET("orders/{userId}")
     suspend fun getOrders(
         @Path("userId") userId: String

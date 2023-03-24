@@ -14,9 +14,8 @@ import com.premiumgrocery.freshandfast.remote.model.ProductData
 import com.premiumgrocery.freshandfast.remote.model.orderrequest.OrderRequestItem
 import com.premiumgrocery.freshandfast.utils.ILoginPrefAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,6 +39,10 @@ class OrderViewModel @Inject constructor(
     val orderDetails: LiveData<List<ProductData>> = _orderDetails
     private val _orderTotalCost = MutableStateFlow(0.0)
     val orderTotalCost = _orderTotalCost.asStateFlow()
+    private val _orderDeliveryCharge = MutableStateFlow(0f)
+    val orderDeliveryCharge = _orderDeliveryCharge.asStateFlow()
+    private val _orderDiscount = MutableStateFlow(0f)
+    val orderDiscount = _orderDiscount.asStateFlow()
     private val _placeOrderStatus = MutableLiveData<OrderStatus?>()
     val placeOrderStatus: LiveData<OrderStatus?> = _placeOrderStatus
 
@@ -89,11 +92,21 @@ class OrderViewModel @Inject constructor(
     private fun updateTotalOrderCost() {
         addProcessTask(Const.processLabelGetTotalOrderCost)
         viewModelScope.launch(ioDispatcher) {
-            categoryRepository.getGroceryProductByIds(
-                currentOrdersStatic.keys.toList()
-            ).collect{
+            combine(
+                categoryRepository.getGroceryProductByIds(
+                    currentOrdersStatic.keys.toList()
+                ),
+                orderRepository.getDeliveryCharge(),
+                orderRepository.getDiscount()
+            ) { f1, f2, f3 -> listOf(f1, f2, f3) }.collect{
+                val products = it[0] as java.util.HashMap<String, ProductData?>
+                val deliveryCharges = it[1] as Int
+                val discount = it[2] as Int
+                _orderDeliveryCharge.emit(deliveryCharges.toFloat())
+                _orderDiscount.emit(discount.toFloat())
                 _orderTotalCost.emit(
-                    userOrderRepository.updateTotalOrderCost( currentOrdersStatic, it )
+                    userOrderRepository.updateTotalOrderCost( currentOrdersStatic, products )
+                    + deliveryCharges - discount
                 )
                 endProcessTask(Const.processLabelGetTotalOrderCost)
             }
@@ -142,12 +155,12 @@ class OrderViewModel @Inject constructor(
                     userId,
                     userEmail,
                     orders,
-                    Const.placeholderShippingAddress
+                    Const.placeholderShippingAddress,
+                    orderDeliveryCharge.value.toInt(),
+                    orderDiscount.value.toInt()
                 ).also {
                     userOrderRepository.clearOrder()
                     _placeOrderStatus.postValue(OrderStatus.SUCCESS)
-                    // Find a way to make the view post a null after receiving.
-                    _placeOrderStatus.postValue(null)
                     endProcessTask(Const.processLabelPlaceOrder)
                 }
             } else {
@@ -155,6 +168,10 @@ class OrderViewModel @Inject constructor(
                 _placeOrderStatus.postValue(OrderStatus.FAIL)
             }
         }
+    }
+
+    fun orderPlacedProcessed() {
+        _placeOrderStatus.value = null
     }
 
     fun calculateTotalCost(price: Double, quantity: Int) = price * quantity

@@ -31,6 +31,7 @@ class UserOrderRepository @Inject constructor(
         var totalCost = 0.0
         try {
             currentOrder.forEach{
+                // Issue: If loading, adding another item will crash the app
                 totalCost += products[it.key]!!.price * it.value
             }
         } catch (e: Exception) {

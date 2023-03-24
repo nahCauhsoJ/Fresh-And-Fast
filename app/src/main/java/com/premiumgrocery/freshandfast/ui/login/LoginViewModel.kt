@@ -31,9 +31,9 @@ class LoginViewModel @Inject constructor(
 ): ViewModel(), Observable {
     val isAlreadyLoggedIn = loginPrefAdapter.getUserToken() != null
 
-    // Note that with this way of setting values, any functions run inside setEmail()
-    //      and setPassword() will get the old value of loginFormEmail. Use
-    //      the given value as the new value.
+    // Note that with this way of setting values, getting loginFormEmail and other
+    //      similar variables from setEmail() and similar will give the old value.
+    //      To use the new value, use the value provided by the parameter instead.
     @get:Bindable
     var loginFormEmail = ""
         set(value) = setEmail(value).also { field = value }
@@ -74,6 +74,13 @@ class LoginViewModel @Inject constructor(
         notifyPropertyChanged(BR.loginFormError)
     }
 
+    fun fillInForm(email: String, password: String) {
+        loginFormEmail = email
+        loginFormPassword = password
+        notifyPropertyChanged(BR.loginFormEmail)
+        notifyPropertyChanged(BR.loginFormPassword)
+    }
+
     fun onLogin() {
         loginIsSubmitting = true
         notifyPropertyChanged(BR.loginIsSubmitting)
@@ -82,9 +89,9 @@ class LoginViewModel @Inject constructor(
             loginRepository.login(loginFormEmail, loginFormPassword).collect{
                 if (it is LoginResponseSealed.Success) {
                     _finishLogin.postValue(true)
-                    loginPrefAdapter.setUserId(Const.placeholderUserId)
-                    loginPrefAdapter.setUserEmail(Const.placeholderUserEmail)
-                    loginPrefAdapter.setUserToken(Const.placeholderToken)
+                    loginPrefAdapter.setUserId(it.successResponse!!.user.id)
+                    loginPrefAdapter.setUserEmail(it.successResponse.user.email)
+                    loginPrefAdapter.setUserToken(it.successResponse.token)
                     setLoginError("")
                 }
                 else {
@@ -105,7 +112,7 @@ class LoginViewModel @Inject constructor(
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
         mCallbacks.remove(callback)
     }
-    fun notifyPropertyChanged(fieldId: Int) {
+    private fun notifyPropertyChanged(fieldId: Int) {
         mCallbacks.notifyCallbacks(this, fieldId, null)
     }
 }
