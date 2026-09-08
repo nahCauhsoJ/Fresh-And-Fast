@@ -1,16 +1,13 @@
 package com.premiumgrocery.freshandfast.injection
 
 import com.google.gson.Gson
-import com.premiumgrocery.freshandfast.Const
 import com.premiumgrocery.freshandfast.remote.ApiGrocery
+import com.premiumgrocery.freshandfast.remote.mock.MockApiGrocery
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -18,11 +15,7 @@ import javax.inject.Singleton
 object NetworkModules {
     @Singleton
     @Provides
-    fun apiGrocery() = Retrofit.Builder()
-        .baseUrl(Const.apiBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create<ApiGrocery>()
+    fun apiGrocery(gson: Gson): ApiGrocery = MockApiGrocery(gson)
 
     @Singleton
     @Provides
